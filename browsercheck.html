@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Проверка браузера</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .result { padding: 10px; margin: 5px; border-radius: 5px; }
+        .safe { background: #d4edda; color: #155724; }
+        .warning { background: #fff3cd; color: #856404; }
+        .danger { background: #f8d7da; color: #721c24; }
+        table { width: 100%; border-collapse: collapse; }
+        td, th { border: 1px solid #ddd; padding: 8px; }
+    </style>
+</head>
+<body>
+    <h1>Информация о вашем браузере</h1>
+    <div id="results"></div>
+
+    <script>
+        // Функция для создания элементов
+        const createRow = (title, value, status = "") => {
+            const statusClass = status === "safe" ? "safe" : 
+                              status === "warning" ? "warning" : 
+                              status === "danger" ? "danger" : "";
+            return `
+                <tr>
+                    <th>${title}</th>
+                    <td class="${statusClass}">${value}</td>
+                </tr>
+            `;
+        };
+
+        // Собираем данные
+        const getBrowserInfo = () => {
+            const adBlockDetected = () => {
+                const testAd = document.createElement('div');
+                testAd.innerHTML = '&nbsp;';
+                testAd.className = 'adsbox';
+                document.body.appendChild(testAd);
+                const detected = window.getComputedStyle(testAd).display === 'none';
+                document.body.removeChild(testAd);
+                return detected;
+            };
+
+            const isTor = navigator.hardwareConcurrency === 1; // Ложный параметр для примера
+
+            return {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                cookiesEnabled: navigator.cookieEnabled,
+                adBlock: adBlockDetected() ? "Да 🛡️" : "Нет 🔴",
+                trackingProtection: "Brave" in window ? "Да (Brave Shields)" : 
+                                  "chrome" in window ? "Нет (Chrome)" : "Неизвестно",
+                fingerprintProtection: "Браузер маскирует fingerprint" in navigator ? "Да" : "Нет",
+                webGL: !!document.createElement('canvas').getContext('webgl'),
+                localStorage: !!window.localStorage,
+                isTor: isTor ? "Да (анонимный режим)" : "Нет"
+            };
+        };
+
+        // Формируем таблицу
+        const info = getBrowserInfo();
+        let html = `
+            <table>
+                ${createRow("User Agent", info.userAgent, "warning")}
+                ${createRow("Платформа", info.platform)}
+                ${createRow("Язык", info.language)}
+                ${createRow("Куки включены", info.cookiesEnabled, info.cookiesEnabled ? "danger" : "safe")}
+                ${createRow("Блокировка рекламы", info.adBlock, info.adBlock.includes("Да") ? "safe" : "danger")}
+                ${createRow("Защита от трекеров", info.trackingProtection, info.trackingProtection.includes("Brave") ? "safe" : "danger")}
+                ${createRow("Защита от fingerprinting", info.fingerprintProtection, info.fingerprintProtection === "Да" ? "safe" : "danger")}
+                ${createRow("WebGL", info.webGL ? "Да" : "Нет", "warning")}
+                ${createRow("LocalStorage", info.localStorage ? "Да" : "Нет", "warning")}
+                ${createRow("Tor-режим", info.isTor, info.isTor.includes("Да") ? "safe" : "warning")}
+            </table>
+            <p>⚠️ Некоторые данные (как User Agent) могут быть замаскированы браузером (например, Brave).</p>
+        `;
+
+        document.getElementById("results").innerHTML = html;
+    </script>
+</body>
+</html>
