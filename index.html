@@ -1,84 +1,90 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Проверка браузера</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        .result { padding: 10px; margin: 5px; border-radius: 5px; }
-        .safe { background: #d4edda; color: #155724; }
-        .warning { background: #fff3cd; color: #856404; }
-        .danger { background: #f8d7da; color: #721c24; }
-        table { width: 100%; border-collapse: collapse; }
-        td, th { border: 1px solid #ddd; padding: 8px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AdBlock Test Page</title>
+  <!-- Example Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXX-X"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}  
+    gtag('js', new Date());
+    gtag('config', 'UA-XXXXXX-X');
+  </script>
+  <!-- Fake ad network script -->
+  <script async src="https://ads.example.com/ad.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .ad-container { margin: 20px 0; border: 1px solid #ccc; padding: 10px; }
+    .ad-container h2 { margin-top: 0; }
+    #adblock-warning { color: red; font-weight: bold; }
+    /* Hidden by some AdBlockers */
+    .ad-banner, .adsbygoogle, #ad-test { width: 100%; height: 90px; background: #f0f0f0; text-align: center; line-height: 90px; margin-bottom: 10px; }
+  </style>
 </head>
 <body>
-    <h1>Информация о вашем браузере</h1>
-    <div id="results"></div>
+  <h1>AdBlock Detection Test</h1>
+  <div id="adblock-warning" style="display:none;">⚠️ We detected that you're using an ad blocker. Please support us by disabling it.</div>
 
+  <div class="ad-container">
+    <h2>1. Standard Ad Image</h2>
+    <img src="ad-placeholder.jpg" alt="Advertisement" class="ad-banner">
+  </div>
+
+  <div class="ad-container">
+    <h2>2. Google AdSense Example</h2>
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXX"
+         data-ad-slot="1234567890"
+         data-ad-format="auto"></ins>
     <script>
-        // Функция для создания элементов
-        const createRow = (title, value, status = "") => {
-            const statusClass = status === "safe" ? "safe" : 
-                              status === "warning" ? "warning" : 
-                              status === "danger" ? "danger" : "";
-            return `
-                <tr>
-                    <th>${title}</th>
-                    <td class="${statusClass}">${value}</td>
-                </tr>
-            `;
-        };
-
-        // Собираем данные
-        const getBrowserInfo = () => {
-            const adBlockDetected = () => {
-                const testAd = document.createElement('div');
-                testAd.innerHTML = '&nbsp;';
-                testAd.className = 'adsbox';
-                document.body.appendChild(testAd);
-                const detected = window.getComputedStyle(testAd).display === 'none';
-                document.body.removeChild(testAd);
-                return detected;
-            };
-
-            const isTor = navigator.hardwareConcurrency === 1; // Ложный параметр для примера
-
-            return {
-                userAgent: navigator.userAgent,
-                platform: navigator.platform,
-                language: navigator.language,
-                cookiesEnabled: navigator.cookieEnabled,
-                adBlock: adBlockDetected() ? "Да 🛡️" : "Нет 🔴",
-                trackingProtection: "Brave" in window ? "Да (Brave Shields)" : 
-                                  "chrome" in window ? "Нет (Chrome)" : "Неизвестно",
-                fingerprintProtection: "Браузер маскирует fingerprint" in navigator ? "Да" : "Нет",
-                webGL: !!document.createElement('canvas').getContext('webgl'),
-                localStorage: !!window.localStorage,
-                isTor: isTor ? "Да (анонимный режим)" : "Нет"
-            };
-        };
-
-        // Формируем таблицу
-        const info = getBrowserInfo();
-        let html = `
-            <table>
-                ${createRow("User Agent", info.userAgent, "warning")}
-                ${createRow("Платформа", info.platform)}
-                ${createRow("Язык", info.language)}
-                ${createRow("Куки включены", info.cookiesEnabled, info.cookiesEnabled ? "danger" : "safe")}
-                ${createRow("Блокировка рекламы", info.adBlock, info.adBlock.includes("Да") ? "safe" : "danger")}
-                ${createRow("Защита от трекеров", info.trackingProtection, info.trackingProtection.includes("Brave") ? "safe" : "danger")}
-                ${createRow("Защита от fingerprinting", info.fingerprintProtection, info.fingerprintProtection === "Да" ? "safe" : "danger")}
-                ${createRow("WebGL", info.webGL ? "Да" : "Нет", "warning")}
-                ${createRow("LocalStorage", info.localStorage ? "Да" : "Нет", "warning")}
-                ${createRow("Tor-режим", info.isTor, info.isTor.includes("Да") ? "safe" : "warning")}
-            </table>
-            <p>⚠️ Некоторые данные (как User Agent) могут быть замаскированы браузером (например, Brave).</p>
-        `;
-
-        document.getElementById("results").innerHTML = html;
+      (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
+  </div>
+
+  <div class="ad-container">
+    <h2>3. Fake Ad Network Slot</h2>
+    <div id="ad-test" class="ad-banner">Ad Network Placeholder</div>
+  </div>
+
+  <div class="ad-container">
+    <h2>4. Tracking Pixel</h2>
+    <p>This is a 1x1 tracking pixel:</p>
+    <img src="https://example.com/tracker/pixel.gif" width="1" height="1" alt="" />
+  </div>
+
+  <script>
+    // AdBlock detection logic
+    window.addEventListener('load', function() {
+      var adElement = document.querySelector('.adsbygoogle');
+      var fakeAd = document.getElementById('ad-test');
+      var adFound = adElement && getComputedStyle(adElement).display !== 'none';
+      var fakeAdFound = fakeAd && getComputedStyle(fakeAd).display !== 'none';
+      if (!adFound || !fakeAdFound) {
+        document.getElementById('adblock-warning').style.display = 'block';
+      }
+    });
+  </script>
+
+  <!-- Additional third-party tracker (e.g., Facebook Pixel) -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n; n.push=n; n.loaded=!0; n.version='2.0';
+    n.queue=[]; t=b.createElement(e); t.async=!0;
+    t.src=v; s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'YOUR_PIXEL_ID');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+     src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"/>
+  </noscript>
+
 </body>
 </html>
